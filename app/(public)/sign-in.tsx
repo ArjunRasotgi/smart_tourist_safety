@@ -1,64 +1,56 @@
-import { useState } from "react";
-import { Text, TextInput, Button, View, ScrollView } from "react-native";
+// File: app/(public)/sign-in.tsx
 
-import { router } from "expo-router";
+import React, { useState } from 'react';
+import { Button, TextInput, View, Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useSignIn } from '@/hooks/useSignIn';
+import { Link } from 'expo-router';
 
-import { useSignIn } from "@/hooks/useSignIn";
+export default function SignInScreen() {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const { signIn, loading } = useSignIn();
 
-export default function Page() {
-  const { signInWithPassword, isLoaded } = useSignIn();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const onSignInPress = async () => {
-    if (!isLoaded) return;
-
-    try {
-      await signInWithPassword({
-        email,
-        password,
-      });
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
-    }
+  const handleSignIn = async () => {
+    const { error } = await signIn(email, password);
+    if (error) Alert.alert('Sign In Error', error.message);
   };
 
   return (
-    <ScrollView
-      automaticallyAdjustsScrollIndicatorInsets
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={{ padding: 16, gap: 8 }}
-    >
-      <Text>Email Address:</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Welcome Back</Text>
       <TextInput
-        autoCapitalize="none"
+        style={styles.input}
+        placeholder="Email"
         value={email}
-        placeholder="Enter email"
-        onChangeText={(email) => setEmail(email)}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
-      <Text>Password:</Text>
       <TextInput
+        style={styles.input}
+        placeholder="Password"
         value={password}
-        placeholder="Enter password"
-        secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={setPassword}
+        secureTextEntry
       />
       <Button
-        title="Continue"
-        onPress={onSignInPress}
-        disabled={!email || !password}
+        title={loading ? 'Signing In...' : 'Sign In'}
+        onPress={handleSignIn}
+        disabled={loading}
       />
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <Text>Don&apos;t have an account? </Text>
-        <Text onPress={() => router.replace("/sign-up")}>Sign up</Text>
-      </View>
-    </ScrollView>
+       <Link href="/sign-up" asChild>
+         <TouchableOpacity style={styles.linkButton}>
+            <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
+         </TouchableOpacity>
+      </Link>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  header: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 24 },
+  input: { height: 50, borderColor: '#ddd', borderWidth: 1, borderRadius: 8, marginBottom: 16, paddingHorizontal: 15, backgroundColor: '#fff' },
+  linkButton: { marginTop: 15, alignItems: 'center' },
+  linkText: { color: '#2196F3' }
+});

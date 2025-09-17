@@ -1,14 +1,19 @@
-import { Stack } from "expo-router";
+// File: app/(protected)/_layout.tsx
+
+import React from 'react';
+import { Redirect, Slot } from 'expo-router';
+import { useAuth } from '@/providers/AuthContext';
 
 export default function ProtectedLayout() {
-  return (
-    <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
-  );
+  const { session, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!session) {
+    return <Redirect href="/sign-in" />;
+  }
+
+  return <Slot />;
 }

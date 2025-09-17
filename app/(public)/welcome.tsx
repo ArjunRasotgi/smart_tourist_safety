@@ -1,13 +1,13 @@
-import { Button } from "react-native";
+// File: app/(public)/welcome.tsx
 
-import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, Button } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function Page() {
+export default function Welcome() {
+  const router = useRouter();
+
   return (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "flex-end" }}
-    >
+    <SafeAreaView style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}>
       <Button title="Sign Up" onPress={() => router.push("/sign-up")} />
       <Button title="Sign In" onPress={() => router.push("/sign-in")} />
     </SafeAreaView>

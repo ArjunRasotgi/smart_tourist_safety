@@ -1,40 +1,18 @@
-import { useSupabase } from "./useSupabase";
+// File: hooks/useSignUp.ts
+
+import { useState } from 'react';
+import { supabase } from '../lib/supabase';
+import { AuthError, User } from '@supabase/supabase-js';
 
 export const useSignUp = () => {
-  const { isLoaded, supabase } = useSupabase();
+  const [loading, setLoading] = useState(false);
 
-  const signUp = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) throw error;
+  const signUp = async (email: string, password: string): Promise<{ data: { user: User | null } | null; error: AuthError | null }> => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    setLoading(false);
+    return { data, error };
   };
 
-  const verifyOtp = async ({
-    email,
-    token,
-  }: {
-    email: string;
-    token: string;
-  }) => {
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token,
-      type: "email",
-    });
-    if (error) throw error;
-  };
-
-  return {
-    isLoaded,
-    signUp,
-    verifyOtp,
-  };
+  return { loading, signUp };
 };

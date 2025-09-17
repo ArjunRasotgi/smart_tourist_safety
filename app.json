@@ -8,6 +8,7 @@
     "scheme": "expo-supabase-starter",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "main": "expo-router/entry",
     "platforms": [
       "ios",
       "android"

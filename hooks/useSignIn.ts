@@ -1,24 +1,21 @@
-import { useSupabase } from "./useSupabase";
+// File: hooks/useSignIn.ts
+
+import { useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 export const useSignIn = () => {
-  const { isLoaded, supabase } = useSupabase();
+  const [loading, setLoading] = useState(false);
 
-  const signInWithPassword = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
+  const signIn = async (email: string, password: string) => {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) throw error;
+
+    setLoading(false);
+    return { error };
   };
 
-  return {
-    isLoaded,
-    signInWithPassword,
-  };
+  return { signIn, loading };
 };
